@@ -7,8 +7,19 @@ const app = express();
 
 // Middleware
 app.use(helmet());
+const allowedOrigins = [
+    'https://taskaiflow.netlify.app',
+    'http://localhost:5173'
+];
+
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 };
 app.use(cors(corsOptions));
